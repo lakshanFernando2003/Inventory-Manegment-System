@@ -7,6 +7,9 @@ import http from 'http'; // Import HTTP
 
 import { connectDB } from './DataBase/ConnectDB.js';
 import authRoutes from './routes/authRoutes.js';
+import customerRoutes from './routes/customerRoutes.js';
+import itemRoutes from './routes/itemRoutes.js';
+
 
 // Environment configuration
 dotenv.config();
@@ -34,7 +37,9 @@ app.use(cors({
 
 app.use("/api/auth", authRoutes)
 
+app.use('/api', customerRoutes);
 
+app.use('/api', itemRoutes);
 
 server.listen(port, () => {
   connectDB();
