@@ -1,10 +1,5 @@
 import express from 'express';
-import {
-  getAllOrders,
-  getOrderById,
-  createOrder,
-  deleteOrder
-} from '../controllers/orderController.js';
+import {  getAllOrders, getOrderById, createOrder, deleteOrder} from '../controllers/order.Controller.js';
 import { verifyToken } from '../middleware/verifyToken.js';
 
 const router = express.Router();
