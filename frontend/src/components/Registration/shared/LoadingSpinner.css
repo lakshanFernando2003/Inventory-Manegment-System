@@ -19,6 +19,7 @@
   width: 160px;
   height: 80px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
@@ -31,7 +32,7 @@
 }
 
 .sf-progress-bar {
-  height: 8px;
+  height: 150px;
   width: 100%;
   background: linear-gradient(90deg, #3B82F6, #93C5FD, #3B82F6);
   background-size: 200% 100%;
@@ -59,7 +60,7 @@
   font-size: 1.5rem;
   font-weight: 600;
   letter-spacing: 0.05em;
-  color: #2563EB;
+  color: #ffffff;
   margin-top: 10px;
 }
 
@@ -75,10 +76,10 @@
 
   .sf-search-icon circle,
   .sf-search-icon line {
-    stroke: #60A5FA;
+    stroke: #ffffff;
   }
 
   .sf-loading-text {
-    color: #60A5FA;
+    color: #ffffff;
   }
 }

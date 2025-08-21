@@ -1,13 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { ProtectedRoute } from './components/Registration/AuthGuard';
+import { useAuthStore } from './components/store/authStore';
+
 import HomeRedirect from './components/HomeRedirect';
 import Authentications from './components/Registration/Authentications.route';
+import LoadingSpinner from './components/Registration/shared/LoadingSpinner';
 
 import './App.css'
 
 function App() {
+
+  const { isCheckingAuth, checkAuth } = useAuthStore();
+
+  useEffect(() => {
+    checkAuth(); // Check authentication status on app load
+  }, [checkAuth]);
+
+  if (isCheckingAuth) return <LoadingSpinner />;
 
   return (
     <div>
