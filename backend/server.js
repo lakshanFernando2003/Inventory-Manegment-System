@@ -9,7 +9,7 @@ import { connectDB } from './DataBase/ConnectDB.js';
 import authRoutes from './routes/authRoutes.js';
 import customerRoutes from './routes/customerRoutes.js';
 import itemRoutes from './routes/itemRoutes.js';
-
+import orderRoutes from './routes/orderRoutes.js';
 
 // Environment configuration
 dotenv.config();
@@ -35,11 +35,11 @@ app.use(cors({
 //   res.send('Hello World!');
 // });
 
-app.use("/api/auth", authRoutes)
-
+app.use("/api/auth", authRoutes);
 app.use('/api', customerRoutes);
-
 app.use('/api', itemRoutes);
+app.use('/api', orderRoutes);
+
 
 server.listen(port, () => {
   connectDB();
