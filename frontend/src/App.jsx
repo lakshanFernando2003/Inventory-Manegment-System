@@ -3,15 +3,23 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast';
 import { ProtectedRoute } from './components/Registration/AuthGuard';
 import { useAuthStore } from './components/store/authStore';
+import { InventoryProvider } from './context/InventoryProvider';
 
-import HomeRedirect from './components/HomeRedirect';
+// Layouts
+import MainLayout from './components/Layout/MainLayout';
+
+// Auth and Loading
 import Authentications from './components/Registration/Authentications.route';
 import LoadingSpinner from './components/Registration/shared/LoadingSpinner';
+import HomeRedirect from './components/HomeRedirect';
+
+// Pages
+import Dashboard from './components/Dashboard/Dashboard';
+import TempPage from './components/Pages/TempPage';
 
 import './App.css'
 
 function App() {
-
   const { isCheckingAuth, checkAuth } = useAuthStore();
 
   useEffect(() => {
@@ -21,37 +29,42 @@ function App() {
   if (isCheckingAuth) return <LoadingSpinner />;
 
   return (
-    <div>
-      <Routes>
-        {/* Redirect reset password routes to auth module */}
-        <Route path="/reset-password/:token" element={<Navigate to={(location) => {
-          const token = location.pathname.split('/').pop();
-          return `/auth/reset-password/${token}`;
-        }} replace />} />
+    <InventoryProvider>
+      <div>
+        <Routes>
+          {/* Redirect reset password routes to auth module */}
+          <Route path="/reset-password/:token" element={<Navigate to={(location) => {
+            const token = location.pathname.split('/').pop();
+            return `/auth/reset-password/${token}`;
+          }} replace />} />
 
-        {/* Authentication routes */}
-        <Route path="/auth/*" element={<Authentications />} />
+          {/* Authentication routes */}
+          <Route path="/auth/*" element={<Authentications />} />
 
-        {/* Dashboard - protected route */}
-        <Route path="/dashboard" element={
-          <ProtectedRoute>
-            {/* Replace this with your actual Dashboard component */}
-            <div>Dashboard Page</div>
-          </ProtectedRoute>
-        } />
+          {/* Protected app routes with main layout */}
+          <Route path="/" element={
+            <ProtectedRoute>
+              <MainLayout />
+            </ProtectedRoute>
+          }>
+            {/* Dashboard */}
+            <Route path="dashboard" element={<Dashboard />} />
+            
+            {/* Temporary pages for sections under development */}
+            <Route path="inventory" element={<TempPage />} />
+            <Route path="customers" element={<TempPage />} />
+            <Route path="orders" element={<TempPage />} />
+            
+            {/* Root redirect */}
+            <Route index element={<HomeRedirect />} />
+          </Route>
 
-        {/* Root redirect */}
-        <Route path="/" element={
-          <ProtectedRoute>
-            <HomeRedirect />
-          </ProtectedRoute>
-        } />
-
-        {/* Catch all - redirect to home */}
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
-      <Toaster />
-    </div>
+          {/* Catch all - redirect to home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+        <Toaster />
+      </div>
+    </InventoryProvider>
   )
 }
 

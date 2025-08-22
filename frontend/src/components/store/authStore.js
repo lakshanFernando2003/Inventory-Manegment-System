@@ -1,12 +1,10 @@
-import { create } from "zustand"; // Make sure you're importing from zustand, not "zustand/vanilla"
-import axios from "axios";
+import { create } from "zustand";
+import { authAxiosInstance as axios } from "../utils/axios";
 
 // Use the environment variable or fall back to localhost
 const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api/auth";
 
 console.log("API URL being used:", API_URL); // Debug logging
-
-axios.defaults.withCredentials = true;
 
 // Helper function to set common headers
 const getAuthHeaders = (contentType = 'application/json') => {
