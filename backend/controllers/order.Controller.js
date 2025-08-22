@@ -194,3 +194,75 @@ export const deleteOrder = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// Update order status
+export const updateOrderStatus = async (req, res) => {
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
+  try {
+    const { status } = req.body;
+    const { id } = req.params;
+
+    // Validate status
+    if (!['pending', 'completed', 'cancelled'].includes(status)) {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid status. Must be pending, completed, or cancelled'
+      });
+    }
+
+    // Find order by ID
+    const order = await Order.findOne({ orderID: id }).session(session);
+
+    if (!order) {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+
+    // Status transition rules
+    const currentStatus = order.status;
+
+    // Rule 1: Cannot change status of completed orders
+    if (currentStatus === 'completed') {
+      await session.abortTransaction();
+      session.endSession();
+      return res.status(400).json({
+        success: false,
+        message: 'Cannot change status of a completed order'
+      });
+    }
+
+    // Rule 2: Cancellation handling - restore inventory if cancelling a pending order
+    if (currentStatus === 'pending' && status === 'cancelled') {
+      // Restore inventory quantities
+      for (const orderItem of order.items) {
+        const item = await Item.findById(orderItem.item).session(session);
+        if (item) {
+          item.quantity += orderItem.quantity;
+          await item.save({ session });
+        }
+      }
+    }
+
+    // Update the order status
+    order.status = status;
+    await order.save({ session });
+
+    await session.commitTransaction();
+    session.endSession();
+
+    res.status(200).json({
+      success: true,
+      message: 'Order status updated successfully',
+      order
+    });
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    res.status(500).json({ success: false, message: error.message });
+  }
+};

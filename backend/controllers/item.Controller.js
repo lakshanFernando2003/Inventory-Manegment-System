@@ -158,3 +158,30 @@ export const deleteItem = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+
+// Search items by name or code
+export const searchItems = async (req, res) => {
+  try {
+    const { query } = req.query;
+
+    if (!query) {
+      return res.status(400).json({ success: false, message: 'Search query is required' });
+    }
+
+    // Case-insensitive search for name or code
+    const items = await Item.find({
+      $or: [
+        { name: { $regex: query, $options: 'i' } },
+        { code: { $regex: query, $options: 'i' } }
+      ]
+    }).sort({ itemID: 1 });
+
+    res.status(200).json({
+      success: true,
+      count: items.length,
+      items
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
