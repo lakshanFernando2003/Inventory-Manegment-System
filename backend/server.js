@@ -10,6 +10,8 @@ import authRoutes from './routes/authRoutes.js';
 import customerRoutes from './routes/customerRoutes.js';
 import itemRoutes from './routes/itemRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
+import dashboardRoutes from './routes/DashboardRoutes.js';
+
 
 // Environment configuration
 dotenv.config();
@@ -22,8 +24,6 @@ app.use(cookieParser()); // to allow us parse incoming cookies
 const port = process.env.PORT || 5000;
 // Create HTTP server using Express app
 const server = http.createServer(app);
-
-
 
 
 app.use(cors({
@@ -39,7 +39,7 @@ app.use("/api/auth", authRoutes);
 app.use('/api', customerRoutes);
 app.use('/api', itemRoutes);
 app.use('/api', orderRoutes);
-
+app.use("/api", dashboardRoutes);
 
 server.listen(port, () => {
   connectDB();
